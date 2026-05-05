@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Azilab</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-card: #fbf9f4;
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --ink-mute: #8a8580;
+    --line: #d9d3c6;
+    --line-soft: #e8e3d6;
+    --accent: #c8553d;
+    --accent-soft: #e8a795;
+    --done: #5a7a4a;
+    --done-bg: #e8eee0;
+    --extra: #8b6f47;
+    --extra-bg: #efe7d8;
+    --shadow: 0 1px 2px rgba(26,26,26,0.04), 0 4px 12px rgba(26,26,26,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(200,85,61,0.04) 0%, transparent 40%),
+      radial-gradient(circle at 90% 90%, rgba(90,122,74,0.04) 0%, transparent 50%);
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    max-width: 1280px;
+    margin: 0 auto;
+    gap: 48px;
+    padding: 48px 40px;
+  }
+
+  .header {
+    grid-column: 1 / -1;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 32px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .brand-subtitle {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+    margin-top: 4px;
+  }
+
+  .header-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .header-date {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+  }
+
+  .header-client {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 16px;
+    font-style: italic;
+  }
+
+  .hero {
+    margin-bottom: 56px;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .hero-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    max-width: 640px;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .hero-description {
+    font-size: 16px;
+    color: var(--ink-soft);
+    max-width: 580px;
+    line-height: 1.65;
+    margin-bottom: 40px;
+  }
+
+  .progress {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+  }
+
+  .progress-stats {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+  }
+
+  .progress-stats span {
+    color: var(--ink-mute);
+    font-size: 14px;
+    margin-left: 4px;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: var(--line-soft);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-soft) 100%);
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--line);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .loading-text {
+    font-size: 14px;
+    color: var(--ink-mute);
+  }
+
+  .trilha {
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .trilha::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 12px;
+    bottom: 12px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--line) 0%, var(--line) 50%, transparent 100%);
+  }
+
+  .fase {
+    position: relative;
+    margin-bottom: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .fase::before {
+    content: '';
+    position: absolute;
+    left: -28px;
+    top: 28px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--line);
+    transition: all 0.3s ease;
+  }
+
+  .fase[data-status="done"]::before {
+    background: var(--done);
+    border-color: var(--done);
+  }
+
+  .fase[data-status="active"]::before {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(200,85,61,0.15);
+  }
+
+  .fase[data-tipo="extra"]::before {
+    background: var(--extra);
+    border-color: var(--extra);
+  }
+
+  .fase:hover {
+    box-shadow: var(--shadow);
+  }
+
+  .fase-header {
+    padding: 24px 28px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    user-select: none;
+  }
+
+  .fase-info {
+    flex: 1;
+  }
+
+  .fase-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .fase-numero {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+    font-weight: 500;
+  }
+
+  .fase-status {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+
+  .fase-status.done {
+    background: var(--done-bg);
+    color: var(--done);
+  }
+
+  .fase-status.active {
+    background: rgba(200,85,61,0.1);
+    color: var(--accent);
+  }
+
+  .fase-status.pending {
+    background: var(--line-soft);
+    color: var(--ink-mute);
+  }
+
+  .fase-badge-extra {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 3px 8px;
+    border-radius: 2px;
+    background: var(--extra-bg);
+    color: var(--extra);
+    font-weight: 600;
+  }
+
+  .fase-titulo {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .fase-resumo {
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .fase-controle {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .fase-progresso-mini {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+
+  .fase-progresso-mini span {
+    color: var(--ink-mute);
+    font-size: 13px;
+  }
+
+  .fase-toggle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    display: grid;
+    place-items: center;
+    transition: all 0.2s ease;
+    color: var(--ink-soft);
+  }
+
+  .fase.expanded .fase-toggle {
+    transform: rotate(180deg);
+    background: var(--ink);
+    color: var(--bg-card);
+    border-color: var(--ink);
+  }
+
+  .fase-conteudo {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fase.expanded .fase-conteudo {
+    max-height: 4000px;
+  }
+
+  .fase-body {
+    padding: 0 28px 28px;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 24px;
+  }
+
+  .secao-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-mute);
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .secao-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line-soft);
+  }
+
+  .tasks {
+    list-style: none;
+    margin-bottom: 28px;
+  }
+
+  .task {
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .task:last-child {
+    border-bottom: none;
+  }
+
+  .task-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+  }
+
+  .task-checkbox {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--ink-mute);
+    border-radius: 3px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    margin-top: 2px;
+    transition: all 0.2s ease;
+    background: var(--bg-card);
+  }
+
+  .task-checkbox:hover {
+    border-color: var(--accent);
+  }
+
+  .task.done .task-checkbox {
+    background: var(--done);
+    border-color: var(--done);
+  }
+
+  .task.done .task-checkbox::after {
+    content: '';
+    width: 10px;
+    height: 5px;
+    border-left: 1.5px solid white;
+    border-bottom: 1.5px solid white;
+    transform: rotate(-45deg) translate(1px, -1px);
+  }
+
+  .task-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .task-text {
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.5;
+    transition: all 0.2s ease;
+  }
+
+  .task.done .task-text {
+    color: var(--ink-mute);
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--ink-mute);
+  }
+
+  .task-obs-toggle {
+    background: none;
+    border: none;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-mute);
+    cursor: pointer;
+    padding: 4px 0;
+    margin-top: 4px;
+    transition: color 0.2s ease;
+    font-family: inherit;
+  }
+
+  .task-obs-toggle:hover {
+    color: var(--accent);
+  }
+
+  .task-obs-toggle.has-content {
+    color: var(--accent);
+  }
+
+  .task-obs-area {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .task.obs-open .task-obs-area {
+    max-height: 240px;
+    margin-top: 8px;
+  }
+
+  .task-obs-textarea {
+    width: 100%;
+    min-height: 70px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--bg);
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--ink);
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .task-obs-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--bg-card);
+  }
+
+  .task-obs-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-mute);
+    margin-top: 6px;
+    height: 16px;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+  }
+
+  .task-obs-status.visible {
+    opacity: 1;
+  }
+
+  .task-obs-status.saved {
+    color: var(--done);
+  }
+
+  .task-obs-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .sidebar {
+    align-self: start;
+    position: sticky;
+    top: 32px;
+  }
+
+  .sidebar-section {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .sidebar-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+
+  .sidebar-subtitle {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-mute);
+    margin-bottom: 20px;
+  }
+
+  .filtros {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .filtro-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+    margin-right: 8px;
+  }
+
+  .filtro-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    border-radius: 100px;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filtro-btn:hover {
+    border-color: var(--ink);
+  }
+
+  .filtro-btn.active {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 12px 18px;
+    border-radius: 4px;
+    font-size: 13px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .toast.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .toast-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--done);
+  }
+
+  .error-box {
+    background: #fee;
+    border: 1px solid #fcc;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    color: #c33;
+  }
+
+  @media (max-width: 920px) {
+    .layout {
+      grid-template-columns: 1fr;
+      padding: 32px 24px;
+      gap: 32px;
+    }
+    .sidebar {
+      position: static;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .layout { padding: 24px 16px; }
+    .header { flex-direction: column; align-items: flex-start; }
+    .header-meta { align-items: flex-start; }
+    .fase-header { padding: 20px; }
+    .fase-body { padding: 20px; padding-top: 20px; }
+    .trilha { padding-left: 24px; }
+    .fase::before { left: -22px; }
+    .fase-titulo { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <header class="header">
+    <div class="header-brand">
+      <div class="brand-mark">A</div>
+      <div class="brand-text">
+        <div class="brand-name">Azilab</div>
+        <div class="brand-subtitle">Painel de Operação</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="header-date" id="headerDate"></div>
+      <div class="header-client" id="headerClient"></div>
+    </div>
+  </header>
+
+  <main id="mainContent"></main>
+
+  <aside class="sidebar" id="sidebar"></aside>
+
+</div>
+
+<div class="toast" id="toast">
+  <span class="toast-dot"></span>
+  <span id="toastMsg">Salvo</span>
+</div>
+
+<script>
+// ============================================================
+// CONFIGURAÇÃO SUPABASE
+// ============================================================
+
+const SUPABASE_URL = 'https://mnvrovenmihmdsplpaoi.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1udnJvdmVubWlobWRzcGxwYW9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5NTExMzEsImV4cCI6MjA5MzUyNzEzMX0.fvTeWlF61yHcOdwIpouhAD-UFuUdsUIsokPDGFiSBWc'
+
+const { createClient } = window.supabase
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+// ============================================================
+// LÓGICA PRINCIPAL
+// ============================================================
+
+let clienteData = null
+let fasesData = []
+let filtroAtivo = 'todas'
+const debounceTimers = {}
+
+async function init() {
+  try {
+    // Pega token da URL
+    const params = new URLSearchParams(window.location.search)
+    const token = params.get('token')
+
+    if (!token) {
+      mostrarErro('Token não encontrado na URL')
+      return
+    }
+
+    // Busca cliente pelo token
+    const { data: cliente, error: erroCliente } = await supabase
+      .from('clientes')
+      .select('*')
+      .eq('token_acesso', token)
+      .single()
+
+    if (erroCliente || !cliente) {
+      mostrarErro('Token inválido ou expirado')
+      return
+    }
+
+    clienteData = cliente
+
+    // Busca fases
+    const { data: fases, error: erroFases } = await supabase
+      .from('fases')
+      .select('*')
+      .eq('cliente_id', cliente.id)
+      .order('ordem', { ascending: true })
+
+    if (erroFases) throw erroFases
+    fasesData = fases || []
+
+    // Renderiza
+    await renderizar()
+
+    // Sincroniza dados em tempo real (opcional, por enquanto só cada 30s)
+    setInterval(sincronizar, 30000)
+
+  } catch (err) {
+    console.error(err)
+    mostrarErro('Erro ao carregar dados')
+  }
+}
+
+async function sincronizar() {
+  if (!clienteData) return
+  const { data: fases } = await supabase
+    .from('fases')
+    .select('*')
+    .eq('cliente_id', clienteData.id)
+    .order('ordem', { ascending: true })
+  if (fases) fasesData = fases
+}
+
+async function renderizar() {
+  const mainEl = document.getElementById('mainContent')
+  mainEl.innerHTML = ''
+
+  // Header
+  const dataAtual = new Date().toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  })
+  document.getElementById('headerDate').textContent = `Atualizado em ${dataAtual}`
+  document.getElementById('headerClient').textContent = `${clienteData.nome} · ${clienteData.projeto}`
+
+  // Hero + Progress
+  const hero = document.createElement('div')
+  hero.innerHTML = `
+    <section class="hero">
+      <div class="hero-eyebrow">Roadmap · 6 meses</div>
+      <h1 class="hero-title">Da arrumação da casa à <em>escala consolidada</em>.</h1>
+      <p class="hero-description">
+        Este é seu mapa de operação. Cada fase tem tarefas, materiais e espaço pra você anotar como foi.
+        Marque conforme avança. O sistema lembra de tudo.
+      </p>
+
+      <div class="progress">
+        <div class="progress-header">
+          <span class="progress-label">Progresso geral</span>
+          <div class="progress-stats" id="statsGeral">0<span>/0 tarefas</span></div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="filtros">
+      <span class="filtro-label">Mostrar</span>
+      <button class="filtro-btn active" data-filtro="todas" onclick="mudarFiltro(this)">Todas</button>
+      <button class="filtro-btn" data-filtro="pendentes" onclick="mudarFiltro(this)">Pendentes</button>
+      <button class="filtro-btn" data-filtro="concluidas" onclick="mudarFiltro(this)">Concluídas</button>
+    </div>
+
+    <div class="trilha" id="trilha"></div>
+  `
+  mainEl.appendChild(hero)
+
+  // Renderiza fases
+  const trilhaEl = document.getElementById('trilha')
+
+  for (const fase of fasesData) {
+    // Busca tarefas da fase
+    const { data: tarefas } = await supabase
+      .from('tarefas')
+      .select('*')
+      .eq('fase_id', fase.id)
+      .order('ordem', { ascending: true })
+
+    const { data: materiais } = await supabase
+      .from('materiais')
+      .select('*')
+      .eq('fase_id', fase.id)
+      .order('ordem', { ascending: true })
+
+    const tarefasArray = tarefas || []
+    const materiaisArray = materiais || []
+
+    const concluidas = tarefasArray.filter(t => t.concluida).length
+    const total = tarefasArray.length
+
+    let statusVisual = 'pending'
+    if (total > 0) {
+      if (concluidas === total) statusVisual = 'done'
+      else if (concluidas > 0) statusVisual = 'active'
+    }
+
+    const statusLabel = {
+      done: 'Concluída',
+      active: 'Em andamento',
+      pending: 'Pendente'
+    }[statusVisual]
+
+    const faseEl = document.createElement('article')
+    faseEl.className = 'fase'
+    faseEl.dataset.status = statusVisual
+    faseEl.dataset.faseId = fase.id
+    if (fase.tipo === 'extra') faseEl.dataset.tipo = 'extra'
+
+    faseEl.innerHTML = `
+      <div class="fase-header" onclick="toggleFase(this)">
+        <div class="fase-info">
+          <div class="fase-meta">
+            <span class="fase-numero">${fase.numero}</span>
+            <span class="fase-status ${statusVisual}">${statusLabel}</span>
+            ${fase.tipo === 'extra' ? '<span class="fase-badge-extra">Extra</span>' : ''}
+          </div>
+          <h2 class="fase-titulo">${fase.titulo}</h2>
+          <p class="fase-resumo">${fase.resumo}</p>
+        </div>
+        <div class="fase-controle">
+          <div class="fase-progresso-mini">${concluidas}<span>/${total}</span></div>
+          <div class="fase-toggle">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="fase-conteudo">
+        <div class="fase-body">
+          <div class="secao-label">Tarefas</div>
+          <ul class="tasks" id="tasks-${fase.id}"></ul>
+          ${materiaisArray.length > 0 ? `
+            <div class="secao-label">Materiais desta fase</div>
+            <div id="materiais-${fase.id}"></div>
+          ` : ''}
+        </div>
+      </div>
+    `
+
+    trilhaEl.appendChild(faseEl)
+
+    // Renderiza tarefas
+    const tasksEl = document.getElementById(`tasks-${fase.id}`)
+    for (const t of tarefasArray) {
+      const li = document.createElement('li')
+      li.className = `task ${t.concluida ? 'done' : ''}`
+      li.dataset.taskId = t.id
+      li.innerHTML = `
+        <div class="task-header">
+          <div class="task-checkbox" onclick="toggleTarefa('${t.id}'); event.stopPropagation();" style="cursor:pointer;"></div>
+          <div class="task-content">
+            <div class="task-text">${t.texto}</div>
+            <button class="task-obs-toggle ${t.observacao ? 'has-content' : ''}" onclick="toggleObs('${t.id}')">
+              ${t.observacao ? '✎ Observação' : '+ Adicionar observação'}
+            </button>
+            <div class="task-obs-area">
+              <textarea class="task-obs-textarea"
+                placeholder="Anote qualquer coisa: o que rolou, dúvidas, próximos passos..."
+                oninput="salvarObs('${t.id}', this.value)">${t.observacao || ''}</textarea>
+              <div class="task-obs-status" id="status-${t.id}">
+                <span class="task-obs-status-dot"></span>
+                <span id="status-text-${t.id}">Salvo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+      tasksEl.appendChild(li)
+    }
+
+    // Renderiza materiais
+    if (materiaisArray.length > 0) {
+      const matsEl = document.getElementById(`materiais-${fase.id}`)
+      matsEl.innerHTML = materiaisArray.map(m => {
+        const pendente = !m.url || m.url === ''
+        if (pendente) {
+          return `
+            <div class="material-card pendente" title="Material ainda não disponível">
+              <div class="material-icon">${m.tipo}</div>
+              <div class="material-info">
+                <div class="material-nome">${m.nome}</div>
+                <div class="material-tipo">Aguardando link</div>
+              </div>
+              <span class="material-pendente-badge">Em breve</span>
+            </div>
+          `
+        }
+        return `
+          <a href="${m.url}" target="_blank" rel="noopener" class="material-card">
+            <div class="material-icon">${m.tipo}</div>
+            <div class="material-info">
+              <div class="material-nome">${m.nome}</div>
+              <div class="material-tipo">Abrir material</div>
+            </div>
+          </a>
+        `
+      }).join('')
+    }
+  }
+
+  // Sidebar
+  const sidebarEl = document.getElementById('sidebar')
+  const { data: biblioteca } = await supabase
+    .from('biblioteca')
+    .select('*')
+    .eq('cliente_id', clienteData.id)
+    .order('ordem', { ascending: true })
+
+  sidebarEl.innerHTML = `
+    <div class="sidebar-section" style="background:linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 100%);color:var(--bg);border:none;">
+      <div class="sidebar-subtitle" style="color:rgba(255,255,255,0.5);">Esta semana</div>
+      <div class="sidebar-title" style="color:var(--bg);margin-bottom:16px;">Foco imediato</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);font-size:13px;line-height:1.5;">
+          <span style="color:var(--accent-soft);font-family:'Fraunces',serif;font-weight:500;flex-shrink:0;">01</span>
+          <span>Preencher a planilha de alunos com os 10 ativos</span>
+        </div>
+        <div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);font-size:13px;line-height:1.5;">
+          <span style="color:var(--accent-soft);font-family:'Fraunces',serif;font-weight:500;flex-shrink:0;">02</span>
+          <span>Registrar os 3 alunos fundadores como exceção privada</span>
+        </div>
+        <div style="display:flex;gap:12px;padding:8px 0;font-size:13px;line-height:1.5;">
+          <span style="color:var(--accent-soft);font-family:'Fraunces',serif;font-weight:500;flex-shrink:0;">03</span>
+          <span>Mandar relatório de progresso pra todos os pais</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Biblioteca</div>
+      <div class="sidebar-subtitle">Materiais de consulta</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:4px;">
+        ${(biblioteca || []).map(item => {
+          const pendente = !item.url || item.url === ''
+          if (pendente) {
+            return `
+              <li>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:3px;color:var(--ink);font-size:13px;cursor:not-allowed;opacity:0.6;">
+                  <span style="width:22px;height:22px;border-radius:2px;background:var(--line-soft);display:grid;place-items:center;font-size:9px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;">${item.tipo}</span>
+                  <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.nome}</span>
+                </div>
+              </li>
+            `
+          }
+          return `
+            <li>
+              <a href="${item.url}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:3px;text-decoration:none;color:var(--ink);transition:all 0.2s ease;font-size:13px;" onmouseover="this.style.background='var(--bg)';this.style.color='var(--accent)'" onmouseout="this.style.background='';this.style.color='var(--ink)'">
+                <span style="width:22px;height:22px;border-radius:2px;background:var(--line-soft);display:grid;place-items:center;font-size:9px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;flex-shrink:0;">${item.tipo}</span>
+                <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.nome}</span>
+              </a>
+            </li>
+          `
+        }).join('')}
+      </ul>
+    </div>
+  `
+
+  atualizarProgresso()
+  aplicarFiltro()
+}
+
+function toggleFase(headerEl) {
+  headerEl.closest('.fase').classList.toggle('expanded')
+}
+
+async function toggleTarefa(tarefaId) {
+  const taskEl = document.querySelector(`[data-task-id="${tarefaId}"]`)
+  const estaConcluida = taskEl.classList.contains('done')
+
+  await supabase
+    .from('tarefas')
+    .update({ concluida: !estaConcluida })
+    .eq('id', tarefaId)
+
+  taskEl.classList.toggle('done')
+  atualizarProgresso()
+  mostrarToast('Tarefa ' + (estaConcluida ? 'reativada' : 'concluída'))
+}
+
+function toggleObs(tarefaId) {
+  const taskEl = document.querySelector(`[data-task-id="${tarefaId}"]`)
+  taskEl.classList.toggle('obs-open')
+}
+
+async function salvarObs(tarefaId, valor) {
+  const statusEl = document.getElementById(`status-${tarefaId}`)
+  if (!statusEl) return
+
+  statusEl.classList.add('visible', 'saving')
+  statusEl.classList.remove('saved')
+  document.getElementById(`status-text-${tarefaId}`).textContent = 'Salvando...'
+
+  clearTimeout(debounceTimers[tarefaId])
+  debounceTimers[tarefaId] = setTimeout(async () => {
+    await supabase
+      .from('tarefas')
+      .update({ observacao: valor })
+      .eq('id', tarefaId)
+
+    statusEl.classList.remove('saving')
+    statusEl.classList.add('saved')
+    document.getElementById(`status-text-${tarefaId}`).textContent = 'Salvo'
+
+    setTimeout(() => statusEl.classList.remove('visible'), 1500)
+  }, 400)
+}
+
+function mudarFiltro(btn) {
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'))
+  btn.classList.add('active')
+  filtroAtivo = btn.dataset.filtro
+  aplicarFiltro()
+}
+
+function aplicarFiltro() {
+  document.querySelectorAll('.task').forEach(task => {
+    const id = task.dataset.taskId
+    const concluida = task.classList.contains('done')
+
+    if (filtroAtivo === 'todas') task.style.display = ''
+    else if (filtroAtivo === 'pendentes') task.style.display = concluida ? 'none' : ''
+    else if (filtroAtivo === 'concluidas') task.style.display = concluida ? '' : 'none'
+  })
+}
+
+function atualizarProgresso() {
+  let total = 0, concluidas = 0
+
+  document.querySelectorAll('.task').forEach(t => {
+    total++
+    if (t.classList.contains('done')) concluidas++
+  })
+
+  const pct = total > 0 ? (concluidas / total) * 100 : 0
+  document.getElementById('progressFill').style.width = pct + '%'
+  document.getElementById('statsGeral').innerHTML = `${concluidas}<span>/${total} tarefas</span>`
+}
+
+let toastTimeout
+function mostrarToast(mensagem) {
+  const toast = document.getElementById('toast')
+  document.getElementById('toastMsg').textContent = mensagem
+  toast.classList.add('visible')
+  clearTimeout(toastTimeout)
+  toastTimeout = setTimeout(() => toast.classList.remove('visible'), 1800)
+}
+
+function mostrarErro(mensagem) {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="error-box">
+      <h2>Erro</h2>
+      <p>${mensagem}</p>
+    </div>
+  `
+}
+
+// Inicializa
+init()
+</script>
+
+</body>
+</html>
